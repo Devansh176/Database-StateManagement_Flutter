@@ -15,6 +15,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    print('Build called');
     return Consumer<NumberListProvider>(
       builder: (context, numbersProviderModel, child) => Scaffold(
         floatingActionButton: FloatingActionButton(

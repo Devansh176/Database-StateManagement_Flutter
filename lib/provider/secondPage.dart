@@ -12,9 +12,10 @@ class SecondPage extends StatefulWidget {
 class _SecondPageState extends State<SecondPage> {
   @override
   Widget build(BuildContext context) {
+    print('Build called !!');
     return Consumer<NumberListProvider>(
       builder: (context, numbersListProvider, child) => Scaffold(
-      floatingActionButton: FloatingActionButton(
+        floatingActionButton: FloatingActionButton(
         onPressed: (){
             numbersListProvider.add();
         },
