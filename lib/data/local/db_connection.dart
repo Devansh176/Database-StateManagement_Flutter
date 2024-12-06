@@ -58,7 +58,7 @@ class DBConnection {
   }
 
   //fetching or reading all data
-  Future<List<Map<String, dynamic>>> getAllNotes() async {
+  Future<List<Map<String, dynamic>>> getAllNotes() async  {
     var db = await getDB();
     ///Select * from note
     List<Map<String, dynamic>> mData = await db.query(TABLE_NOTE,);

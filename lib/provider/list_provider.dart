@@ -8,4 +8,10 @@ class NumberListProvider extends ChangeNotifier{
     numbers.add(last + 1);
     notifyListeners();
   }
+
+  void subtract(){
+    int last = numbers.last;
+    numbers.remove(last);
+    notifyListeners();
+  }
 }

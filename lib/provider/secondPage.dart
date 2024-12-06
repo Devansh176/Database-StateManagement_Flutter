@@ -15,17 +15,30 @@ class _SecondPageState extends State<SecondPage> {
     print('Build called !!');
     return Consumer<NumberListProvider>(
       builder: (context, numbersListProvider, child) => Scaffold(
-        floatingActionButton: FloatingActionButton(
-        onPressed: (){
-            numbersListProvider.add();
-        },
-        child: const Icon(Icons.add,),
-      ),
-      appBar: AppBar(
-        centerTitle: true,
-        title: const Text('Provider'),
-      ),
-      body: SizedBox(
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            FloatingActionButton(
+              heroTag: 'Add',
+              onPressed: (){
+                numbersListProvider.add();
+              },
+              child: const Icon(Icons.add,),
+            ),
+            FloatingActionButton(
+              heroTag: 'Subtract',
+              onPressed: (){
+                numbersListProvider.subtract();
+              },
+              child: const Icon(Icons.remove,),
+            ),
+          ],
+        ),
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text('Provider'),
+        ),
+        body: SizedBox(
           child: Column(
             children: [
               Text(numbersListProvider.numbers.last.toString(),

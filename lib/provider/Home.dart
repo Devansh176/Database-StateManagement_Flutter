@@ -18,11 +18,34 @@ class _HomeState extends State<Home> {
     print('Build called');
     return Consumer<NumberListProvider>(
       builder: (context, numbersProviderModel, child) => Scaffold(
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            numbersProviderModel.add();
-          },
-          child: const Icon(Icons.add,),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            FloatingActionButton(
+              heroTag: 'add',
+              onPressed: () {
+                numbersProviderModel.add();
+              },
+              child: const Icon(Icons.add,),
+            ),
+            FloatingActionButton(
+              heroTag: 'subtract',
+              onPressed: () {
+                numbersProviderModel.subtract();
+              },
+              child: const Icon(Icons.remove,),
+            ),
+            ElevatedButton(
+              onPressed: (){
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => SecondPage(),
+                  ),
+                );
+              },
+              child: Text('Second Page'),
+            ),
+          ],
         ),
         appBar: AppBar(
           centerTitle: true,
@@ -47,16 +70,6 @@ class _HomeState extends State<Home> {
                       );
                     },
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: (){
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => SecondPage(),
-                      ),
-                    );
-                  },
-                  child: Text('Second Page'),
                 ),
               ],
             ),
