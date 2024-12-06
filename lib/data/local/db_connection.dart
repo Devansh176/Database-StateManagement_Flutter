@@ -47,11 +47,11 @@ class DBConnection {
   }
 
   //insertion
-  Future<bool> addNote({required String mTitle, required String mDesc}) async {
+  Future<bool> addNote({required String title, required String desc}) async {
     var db = await getDB();
     int rowsEffected = await db.insert(TABLE_NOTE, {
-      COLUMN_NOTE_TITLE : mTitle,
-      COLUMN_NOTE_DESC : mDesc
+      COLUMN_NOTE_TITLE : title,
+      COLUMN_NOTE_DESC : desc
     });
 
     return rowsEffected>0;
@@ -68,7 +68,6 @@ class DBConnection {
   //Update data
   Future<bool> updateNote({required String title, required String desc, required int sno}) async {
     var db = await getDB();
-    
     int rowsAffected = await db.update(TABLE_NOTE, {
       COLUMN_NOTE_TITLE : title,
       COLUMN_NOTE_DESC : desc,
@@ -82,7 +81,7 @@ class DBConnection {
   Future<bool> deleteNote({required int sno}) async {
     var db = await getDB();
 
-    int rowsEffected = await db.delete(TABLE_NOTE, where: "$COLUMN_NOTE_SN0 = ?", whereArgs: ['$sno']);
+    int rowsEffected = await db.delete(TABLE_NOTE, where: "$COLUMN_NOTE_SN0 = ?", whereArgs: [sno]);
     return rowsEffected > 0;
   }
 }
