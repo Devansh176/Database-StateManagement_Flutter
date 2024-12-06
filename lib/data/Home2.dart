@@ -48,7 +48,7 @@ class _Home2State extends State<Home2> {
         itemCount: allNotes.length,
         itemBuilder: (_, index) {
           return ListTile(
-            leading: Text('${allNotes[index][DBConnection.COLUMN_NOTE_SN0]}'),
+            leading: Text('${index+1}'),
             title: Text(allNotes[index][DBConnection.COLUMN_NOTE_TITLE]),
             subtitle: Text(allNotes[index][DBConnection.COLUMN_NOTE_DESC]),
             trailing: SizedBox(
@@ -61,10 +61,13 @@ class _Home2State extends State<Home2> {
                       openBottomSheet(isEdit: true, note: allNotes[index]);
                     },
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      // Add delete functionality here if needed
+                  InkWell(
+                    child : const Icon(Icons.delete, color: Colors.red),
+                    onTap: () async {
+                      bool check = await dbRef!.deleteNote(sno: allNotes[index][DBConnection.COLUMN_NOTE_SN0]);
+                      if(check) {
+                        getNotes();
+                      }
                     },
                   ),
                 ],
