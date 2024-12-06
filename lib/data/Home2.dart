@@ -24,33 +24,59 @@ class _Home2State extends State<Home2> {
     setState(() {});
   }
 
+  void openBottomSheet({required bool isEdit, Map<String, dynamic>? note}) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => BottomSheetView(
+        dbRef: dbRef,
+        onNoteAdded: getNotes,
+        isEdit: isEdit,
+        note: note,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Notes'),
       ),
-      body: allNotes.isNotEmpty ? ListView.builder(
+      body: allNotes.isNotEmpty
+          ? ListView.builder(
         itemCount: allNotes.length,
         itemBuilder: (_, index) {
           return ListTile(
             leading: Text('${allNotes[index][DBConnection.COLUMN_NOTE_SN0]}'),
             title: Text(allNotes[index][DBConnection.COLUMN_NOTE_TITLE]),
             subtitle: Text(allNotes[index][DBConnection.COLUMN_NOTE_DESC]),
+            trailing: SizedBox(
+              width: 100,
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () {
+                      openBottomSheet(isEdit: true, note: allNotes[index]);
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () {
+                      // Add delete functionality here if needed
+                    },
+                  ),
+                ],
+              ),
+            ),
           );
         },
       )
           : const Center(child: Text("No Notes added !!")),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder: (context) => BottomSheetView(
-              dbRef: dbRef,
-              onNoteAdded: getNotes,
-            ),
-          );
+          openBottomSheet(isEdit: false);
         },
         child: const Icon(Icons.add),
       ),
@@ -61,11 +87,15 @@ class _Home2State extends State<Home2> {
 class BottomSheetView extends StatefulWidget {
   final DBConnection? dbRef;
   final VoidCallback onNoteAdded;
+  final bool isEdit;
+  final Map<String, dynamic>? note;
 
   const BottomSheetView({
     super.key,
     required this.dbRef,
     required this.onNoteAdded,
+    required this.isEdit,
+    this.note,
   });
 
   @override
@@ -75,7 +105,15 @@ class BottomSheetView extends StatefulWidget {
 class _BottomSheetViewState extends State<BottomSheetView> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
-  String errorMsg = "";
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isEdit && widget.note != null) {
+      titleController.text = widget.note![DBConnection.COLUMN_NOTE_TITLE] ?? '';
+      descriptionController.text = widget.note![DBConnection.COLUMN_NOTE_DESC] ?? '';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,9 +128,9 @@ class _BottomSheetViewState extends State<BottomSheetView> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'Add Note',
-              style: TextStyle(
+            Text(
+              widget.isEdit ? 'Edit Note' : 'Add Note',
+              style: const TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.bold,
               ),
@@ -137,16 +175,24 @@ class _BottomSheetViewState extends State<BottomSheetView> {
                       var desc = descriptionController.text;
 
                       if (title.isNotEmpty && desc.isNotEmpty) {
-                        bool check = await widget.dbRef!.addNote(
-                          mTitle: title,
-                          mDesc: desc,
-                        );
-                        if (check) {
-                          widget.onNoteAdded();
-                          Navigator.pop(context);
+                        if (widget.isEdit) {
+                          // Update the note in the database
+                          bool check = await widget.dbRef!.updateNote(
+                            sno : widget.note![DBConnection.COLUMN_NOTE_SN0],
+                            title: title,
+                            desc: desc,
+                          );
+                          if (check) widget.onNoteAdded();
+                        } else {
+                          // Add the new note
+                          bool check = await widget.dbRef!.addNote(
+                            mTitle: title,
+                            mDesc: desc,
+                          );
+                          if (check) widget.onNoteAdded();
                         }
-                      } else {
                         Navigator.pop(context);
+                      } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Please fill all the details.'),
@@ -154,7 +200,7 @@ class _BottomSheetViewState extends State<BottomSheetView> {
                         );
                       }
                     },
-                    child: const Text('Add Note'),
+                    child: Text(widget.isEdit ? 'Edit Note' : 'Add Note'),
                   ),
                 ),
                 const SizedBox(width: 10),

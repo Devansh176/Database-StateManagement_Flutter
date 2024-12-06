@@ -57,7 +57,6 @@ class DBConnection {
     return rowsEffected>0;
   }
 
-
   //fetching or reading all data
   Future<List<Map<String, dynamic>>> getAllNotes() async {
     var db = await getDB();
@@ -65,4 +64,26 @@ class DBConnection {
     List<Map<String, dynamic>> mData = await db.query(TABLE_NOTE,);
     return mData;
   }
+
+  //Update data
+  Future<bool> updateNote({required String title, required String desc, required int sno}) async {
+    var db = await getDB();
+    
+    int rowsAffected = await db.update(TABLE_NOTE, {
+      COLUMN_NOTE_TITLE : title,
+      COLUMN_NOTE_DESC : desc,
+      },
+      where: "$COLUMN_NOTE_SN0 = $sno"
+    );
+    return rowsAffected > 0;
+  }
+
+  ///delete note or data
+  Future<bool> deleteNote({required int sno}) async {
+    var db = await getDB();
+
+    int rowsEffected = await db.delete(TABLE_NOTE, where: "$COLUMN_NOTE_SN0 = ?", whereArgs: ['$sno']);
+    return rowsEffected > 0;
+  }
 }
+
