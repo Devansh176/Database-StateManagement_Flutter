@@ -6,6 +6,7 @@ import 'package:practice2/provider/Home.dart';
 import 'package:practice2/provider/list_details.dart';
 import 'package:practice2/provider/list_map_provider.dart';
 import 'package:practice2/provider/list_provider.dart';
+import 'package:practice2/themeProvider.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -35,10 +36,22 @@ class _MyAppState extends State<MyApp> {
           create: (context) => DBProvider(dbConnection: DBConnection.getInstance,
           ),
         ),
+        ChangeNotifierProvider(
+          create: (context) => ThemeProvider(),
+        ),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Home2(),
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            themeMode: themeProvider.getTheme() ? ThemeMode.dark : ThemeMode.light,
+            darkTheme: ThemeData.dark(),
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey,),
+            ),
+            debugShowCheckedModeBanner: false,
+            home: Home2(),
+          );
+        },
       ),
     );
   }

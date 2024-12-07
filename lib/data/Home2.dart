@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:practice2/data/local/dbProvider.dart';
 import 'package:practice2/data/taskAdding.dart';
+import 'package:practice2/themeProvider.dart';
 import 'package:provider/provider.dart';
 
 class Home2 extends StatefulWidget {
@@ -19,18 +20,27 @@ class _Home2State extends State<Home2> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Notes'),
-        // actions: [
-        //   PopupMenuButton(
-        //     itemBuilder: (_){
-        //       return PopupMenuItem(
-        //         child: ,
-        //       ),
-        //     },
-        //   ),
-        // ],
+        actions: [
+          Consumer<ThemeProvider>(
+            builder: (ctx, provider, __){
+            return IconButton(
+              onPressed: (){
+                provider.updateTheme(
+                  value: !themeProvider.getTheme(),
+                );
+              },
+              icon: Icon(
+                themeProvider.getTheme() ? Icons.nightlight_outlined : Icons.sunny,
+              ),
+            );
+          })
+        ],
       ),
       body: Consumer<DBProvider>(
         builder: (ctx, provider, __) {
